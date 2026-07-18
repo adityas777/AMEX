@@ -224,7 +224,7 @@ function App() {
     const t3 = setTimeout(() => addLog("Parsing message bodies & verifying structural checksums...", "info"), 2800);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/gmail/poll-now?cardmember_id=${activeMemberId}`, {
+      const res = await fetch(`${API_BASE_URL}/gmail/poll-now`, {
         method: "POST",
       });
 
