@@ -431,10 +431,10 @@ def reset_db(db: Session = Depends(get_db)):
     return {"message": "Database reset and seeded."}
 
 @app.post("/gmail/poll-now")
-def poll_gmail_now():
+def poll_gmail_now(cardmember_id: str = "cm_platinum_1"):
     try:
         from backend.gmail_poller import run_poll_cycle
-        results = run_poll_cycle()
+        results = run_poll_cycle(cardmember_id)
         return {
             "status": "success",
             "message": f"Gmail sync complete. Ingested {results['transactions_ingested']} transactions and {results['events_ingested']} flight delays. Skipped {results['skipped']} emails.",

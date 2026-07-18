@@ -24,7 +24,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 CREDENTIALS_PATH = os.path.join(os.path.dirname(__file__), "credentials.json")
 TOKEN_PATH = os.path.join(os.path.dirname(__file__), "token.json")
 
-def get_gmail_service():
+def get_gmail_service(cardmember_id: str = "cm_platinum_1"):
     """
     Attempts to authenticate with Gmail API. 
     If credentials.json is missing or authentication fails, returns None.
@@ -38,9 +38,10 @@ def get_gmail_service():
         return None
 
     creds = None
-    if os.path.exists(TOKEN_PATH):
+    token_path = os.path.join(os.path.dirname(__file__), f"token_{cardmember_id}.json")
+    if os.path.exists(token_path):
         try:
-            creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
         except Exception as e:
             print(f"[GMAIL POLLER] Error loading token: {e}")
 
@@ -53,7 +54,7 @@ def get_gmail_service():
                 flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_PATH, SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
-            with open(TOKEN_PATH, 'w') as token:
+            with open(token_path, 'w') as token:
                 token.write(creds.to_json())
         except Exception as e:
             print(f"[GMAIL POLLER] Google OAuth authentication failed: {e}. Entering Mock Sandbox Mode.")
@@ -66,12 +67,12 @@ def get_gmail_service():
         print(f"[GMAIL POLLER] Failed to build Gmail service: {e}")
         return None
 
-def fetch_unread_alert_emails() -> List[Dict[str, Any]]:
+def fetch_unread_alert_emails(cardmember_id: str = "cm_platinum_1") -> List[Dict[str, Any]]:
     """
     Fetches unread emails. If Gmail service is not available, 
     returns a mock set of sandbox emails representing demo scenarios.
     """
-    service = get_gmail_service()
+    service = get_gmail_service(cardmember_id)
     if not service:
         # Mock Sandbox Mode: returns realistic alert emails
         print("[GMAIL POLLER] Mock Sandbox Mode activated.")
@@ -245,7 +246,7 @@ def extract_flight_delay_fields(body: str) -> Optional[Dict[str, Any]]:
         "airline": airline
     }
 
-def run_poll_cycle() -> Dict[str, int]:
+def run_poll_cycle(cardmember_id: str = "cm_platinum_1") -> Dict[str, int]:
     """
     Main entry point: fetches unread emails, parses fields, checks for duplicates,
     and directly inserts transactions/events into the database (simulating the POST endpoints).
@@ -259,7 +260,7 @@ def run_poll_cycle() -> Dict[str, int]:
     }
     
     try:
-        emails = fetch_unread_alert_emails()
+        emails = fetch_unread_alert_emails(cardmember_id)
         
         for email in emails:
             msg_id = email["id"]
@@ -281,13 +282,8 @@ def run_poll_cycle() -> Dict[str, int]:
             if classification == "purchase_alert":
                 fields = extract_purchase_fields(email["body"])
                 if fields:
-                    # 1. Lookup Cardholder ID based on card product
-                    # Default Platinum Card -> cm_platinum_1, Gold Card -> cm_gold_1, Everyday -> cm_everyday_1
-                    cardholder_id = "cm_platinum_1"
-                    if fields["card_product"] == "Amex Gold Card":
-                        cardholder_id = "cm_gold_1"
-                    elif fields["card_product"] == "Amex Everyday Cashback":
-                        cardholder_id = "cm_everyday_1"
+                    # 1. Map to active cardholder ID
+                    cardholder_id = cardmember_id
                         
                     # 2. Map merchant name to realistic MCC
                     merchant = fields["merchant_name"].lower()
@@ -343,9 +339,7 @@ def run_poll_cycle() -> Dict[str, int]:
                     
                     if not related_tx:
                         tx_id = f"tx_auto_ticket_{msg_id}"
-                        cardholder_id = "cm_platinum_1"
-                        if "delta" in fields["airline"].lower():
-                            cardholder_id = "cm_gold_1"
+                        cardholder_id = cardmember_id
                             
                         db_tx = Transaction(
                             id=tx_id,
