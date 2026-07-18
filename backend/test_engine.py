@@ -139,3 +139,49 @@ def test_ml_layer_predictions():
     # Check non-qualifying
     label_none, conf_none = ml_engine.predict_transaction("Whole foods groceries weekly shopping", "Whole Foods", "5411", 85.0)
     assert label_none == "none"
+
+def test_gmail_poller_classification():
+    from backend.gmail_poller import classify_email
+    
+    # 1. Purchase alert
+    email_pur = {
+        "id": "e1",
+        "subject": "Transaction Alert: Your Amex card purchase",
+        "sender": "alerts@americanexpress.com",
+        "body": "A purchase was made at Apple Store."
+    }
+    assert classify_email(email_pur) == "purchase_alert"
+    
+    # 2. Flight delay alert
+    email_del = {
+        "id": "e2",
+        "subject": "Lufthansa schedule change: Delayed flight",
+        "sender": "notifications@lufthansa.com",
+        "body": "Your flight has been delayed."
+    }
+    assert classify_email(email_del) == "flight_delay_alert"
+
+def test_gmail_purchase_extraction():
+    from backend.gmail_poller import extract_purchase_fields
+    
+    body = "An alert for your Amex Platinum Card: A charge of $1199.50 was made at Apple Store on 2026-07-18 for Product: iPhone 16 Pro Max."
+    fields = extract_purchase_fields(body)
+    
+    assert fields is not None
+    assert fields["amount"] == 1199.50
+    assert fields["merchant_name"] == "Apple Store"
+    assert fields["card_product"] == "Amex Platinum Card"
+    assert fields["date_str"] == "2026-07-18"
+    assert fields["product_description"] == "iPhone 16 Pro Max"
+
+def test_gmail_flight_delay_extraction():
+    from backend.gmail_poller import extract_flight_delay_fields
+    
+    body = "Dear passenger, Delta Flight DL102 has been delayed by 8 hours due to cargo loading issues."
+    fields = extract_flight_delay_fields(body)
+    
+    assert fields is not None
+    assert fields["flight_number"] == "DL102"
+    assert fields["delay_hours"] == 8
+    assert fields["airline"] == "Delta Air Lines"
+

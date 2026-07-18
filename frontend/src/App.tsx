@@ -214,6 +214,32 @@ function App() {
     }
   };
 
+  // Sync from Gmail
+  const handleSyncGmail = async () => {
+    try {
+      addLog("Querying Gmail inbox for unread transaction & flight-delay alerts...", "warn");
+      const res = await fetch(`${API_BASE_URL}/gmail/poll-now`, {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.detail || "Gmail sync failed");
+      }
+
+      const data = await res.json();
+      const results = data.data;
+
+      addLog(`[GMAIL SYNC] Ingested ${results.transactions_ingested} transactions and ${results.events_ingested} flight delays. Skipped ${results.skipped} duplicates.`, "success");
+
+      // Refresh data
+      await fetchMemberData(activeMemberId);
+      await fetchAllClaims();
+    } catch (err: any) {
+      addLog(`Gmail Sync failed: ${err.message}`, "error");
+    }
+  };
+
   return (
     <div className="app-container">
       {/* Header */}
@@ -296,6 +322,7 @@ function App() {
           logs={logs}
           onRunScenario={handleRunScenario}
           onResetDb={handleResetDb}
+          onSyncGmail={handleSyncGmail}
         />
       </div>
     </div>

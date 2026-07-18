@@ -21,6 +21,7 @@ class TransactionBase(BaseModel):
     timestamp: datetime
     product_description: Optional[str] = None
     transaction_type: str = "purchase"
+    source_email_id: Optional[str] = None
 
 class TransactionCreate(BaseModel):
     id: Optional[str] = None
@@ -32,6 +33,7 @@ class TransactionCreate(BaseModel):
     timestamp: Optional[datetime] = None
     product_description: Optional[str] = None
     transaction_type: str = "purchase"
+    source_email_id: Optional[str] = None
 
 class TransactionResponse(TransactionBase):
     class Config:

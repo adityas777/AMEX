@@ -21,6 +21,17 @@ from backend.seed import seed_db
 # Create DB tables
 Base.metadata.create_all(bind=engine)
 
+# Dynamically inject source_email_id column if it is missing (self-healing migration)
+from sqlalchemy import text
+try:
+    with engine.connect() as conn:
+        conn.execute(text("ALTER TABLE transactions ADD COLUMN source_email_id VARCHAR;"))
+        conn.commit()
+        print("Successfully injected column source_email_id into transactions table.")
+except Exception:
+    # Column already exists, swallow exception
+    pass
+
 app = FastAPI(title="Amex Card Benefit Activation Engine API")
 
 # Setup CORS
@@ -418,3 +429,17 @@ def run_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db)):
 def reset_db(db: Session = Depends(get_db)):
     seed_db(db)
     return {"message": "Database reset and seeded."}
+
+@app.post("/gmail/poll-now")
+def poll_gmail_now():
+    try:
+        from backend.gmail_poller import run_poll_cycle
+        results = run_poll_cycle()
+        return {
+            "status": "success",
+            "message": f"Gmail sync complete. Ingested {results['transactions_ingested']} transactions and {results['events_ingested']} flight delays. Skipped {results['skipped']} emails.",
+            "data": results
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

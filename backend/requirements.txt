@@ -7,3 +7,7 @@ joblib
 numpy
 pandas
 pytest
+google-auth
+google-auth-oauthlib
+google-api-python-client
+

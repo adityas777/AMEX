@@ -5,6 +5,7 @@ interface SimulatorControlsProps {
   logs: string[];
   onRunScenario: (scenarioType: string) => Promise<void>;
   onResetDb: () => Promise<void>;
+  onSyncGmail: () => Promise<void>;
 }
 
 export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
@@ -12,6 +13,7 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
   logs,
   onRunScenario,
   onResetDb,
+  onSyncGmail,
 }) => {
   return (
     <div className="glass-card simulator-panel">
@@ -62,6 +64,28 @@ export const SimulatorControls: React.FC<SimulatorControlsProps> = ({
           <div className="scenario-desc">
             Sarah Jenkins buys Nike Air VaporMax shoes for $280.00. 45 days later, she tries to return them, but Nike Town denies the return.
           </div>
+        </button>
+      </div>
+
+      <div style={{ marginBottom: "1.25rem" }}>
+        <button
+          className="btn"
+          onClick={onSyncGmail}
+          style={{
+            width: "100%",
+            padding: "0.75rem",
+            fontSize: "0.85rem",
+            background: "linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)",
+            color: "white",
+            boxShadow: "0 4px 12px rgba(124, 58, 237, 0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem"
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Sync Alerts from Gmail
         </button>
       </div>
 

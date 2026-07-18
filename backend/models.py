@@ -25,6 +25,7 @@ class Transaction(Base):
     timestamp = Column(DateTime, default=datetime.datetime.utcnow)
     product_description = Column(String, nullable=True)
     transaction_type = Column(String, default="purchase")  # purchase | return
+    source_email_id = Column(String, nullable=True)
 
     card_member = relationship("CardMember", back_populates="transactions")
     events = relationship("TriggerEvent", back_populates="transaction")
