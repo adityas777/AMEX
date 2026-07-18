@@ -34,3 +34,8 @@ frontend/.oxlintrc.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Google API Credentials and Cached Tokens
+backend/credentials.json
+backend/token.json
+
