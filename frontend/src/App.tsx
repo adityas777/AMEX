@@ -17,6 +17,7 @@ function App() {
   const [selectedClaim, setSelectedClaim] = useState<Claim | null>(null);
   const [activeTab, setActiveTab] = useState<"customer" | "admin">("customer");
   const [logs, setLogs] = useState<string[]>([]);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
   const addLog = useCallback((message: string, type: "info" | "warn" | "error" | "success" = "info") => {
     const timestamp = new Date().toLocaleTimeString();
@@ -216,8 +217,13 @@ function App() {
 
   // Sync from Gmail
   const handleSyncGmail = async () => {
+    setIsSyncing(true);
+    addLog("Initializing Gmail sync protocol...", "warn");
+    const t1 = setTimeout(() => addLog("Establishing secure OAuth 2.0 handshake...", "info"), 800);
+    const t2 = setTimeout(() => addLog("Scanning mailbox folders for Amex alerts & travel delays...", "info"), 1800);
+    const t3 = setTimeout(() => addLog("Parsing message bodies & verifying structural checksums...", "info"), 2800);
+
     try {
-      addLog("Querying Gmail inbox for unread transaction & flight-delay alerts...", "warn");
       const res = await fetch(`${API_BASE_URL}/gmail/poll-now`, {
         method: "POST",
       });
@@ -237,6 +243,11 @@ function App() {
       await fetchAllClaims();
     } catch (err: any) {
       addLog(`Gmail Sync failed: ${err.message}`, "error");
+    } finally {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      setIsSyncing(false);
     }
   };
 
@@ -323,6 +334,7 @@ function App() {
           onRunScenario={handleRunScenario}
           onResetDb={handleResetDb}
           onSyncGmail={handleSyncGmail}
+          isSyncing={isSyncing}
         />
       </div>
     </div>
