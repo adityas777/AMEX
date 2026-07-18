@@ -1,0 +1,81 @@
+{
+  "policies": [
+    {
+      "id": "policy_platinum_purchase_protection",
+      "benefit_type": "purchase_protection",
+      "name": "Platinum Purchase Protection",
+      "eligible_card_products": ["Amex Platinum Card"],
+      "coverage_window_days": 90,
+      "max_coverage_amount": 10000.0,
+      "annual_cap": 50000.0,
+      "eligible_categories": [],
+      "excluded_categories": ["5511", "5533", "8211"],
+      "trigger_conditions": {
+        "event_types": ["theft_report", "damage_report"]
+      },
+      "required_evidence": ["Official Police Report (for theft)", "Item Damage Assessment Photo", "Original Purchase Receipt"]
+    },
+    {
+      "id": "policy_gold_purchase_protection",
+      "benefit_type": "purchase_protection",
+      "name": "Gold Purchase Protection",
+      "eligible_card_products": ["Amex Gold Card"],
+      "coverage_window_days": 90,
+      "max_coverage_amount": 1000.0,
+      "annual_cap": 10000.0,
+      "eligible_categories": [],
+      "excluded_categories": ["5511", "5533", "8211"],
+      "trigger_conditions": {
+        "event_types": ["theft_report", "damage_report"]
+      },
+      "required_evidence": ["Official Police Report (for theft)", "Item Damage Assessment Photo", "Original Purchase Receipt"]
+    },
+    {
+      "id": "policy_platinum_return_protection",
+      "benefit_type": "return_protection",
+      "name": "Platinum Return Protection",
+      "eligible_card_products": ["Amex Platinum Card"],
+      "coverage_window_days": 90,
+      "max_coverage_amount": 300.0,
+      "annual_cap": 1000.0,
+      "eligible_categories": [],
+      "excluded_categories": ["5511", "5533", "8211", "5912"],
+      "trigger_conditions": {
+        "event_types": ["return_denied"]
+      },
+      "required_evidence": ["Written Store Return Denial Statement", "Original Purchase Receipt"]
+    },
+    {
+      "id": "policy_platinum_travel_delay",
+      "benefit_type": "travel_delay",
+      "name": "Platinum Travel Delay Insurance",
+      "eligible_card_products": ["Amex Platinum Card"],
+      "coverage_window_days": 30,
+      "max_coverage_amount": 500.0,
+      "annual_cap": 2000.0,
+      "eligible_categories": ["3000", "3001", "3002", "3003", "3004", "3005", "3006", "3007", "3008", "3009", "3010", "4511"],
+      "excluded_categories": [],
+      "trigger_conditions": {
+        "event_types": ["flight_delay"],
+        "min_delay_hours": 6
+      },
+      "required_evidence": ["Airline Delay Verification Letter/Statement", "Original Flight Ticket", "Expense Receipts (meals/lodging)"]
+    },
+    {
+      "id": "policy_gold_travel_delay",
+      "benefit_type": "travel_delay",
+      "name": "Gold Travel Delay Insurance",
+      "eligible_card_products": ["Amex Gold Card"],
+      "coverage_window_days": 30,
+      "max_coverage_amount": 300.0,
+      "annual_cap": 1200.0,
+      "eligible_categories": ["3000", "3001", "3002", "3003", "3004", "3005", "3006", "3007", "3008", "3009", "3010", "4511"],
+      "excluded_categories": [],
+      "trigger_conditions": {
+        "event_types": ["flight_delay"],
+        "min_delay_hours": 12
+      },
+      "required_evidence": ["Airline Delay Verification Letter/Statement", "Original Flight Ticket", "Expense Receipts (meals/lodging)"]
+    }
+  ]
+}
