@@ -4,6 +4,8 @@ An automated claims processing platform that parses transaction feeds and trigge
 
 **Live Frontend Application URL:** [https://amex-frontend-service.onrender.com/](https://amex-frontend-service.onrender.com/)
 
+**Video Explaination:** [https://www.youtube.com/watch?v=iusS8zFyRfg](https://www.youtube.com/watch?v=iusS8zFyRfg)
+
 ---
 
 ## 🌟 Key Features
